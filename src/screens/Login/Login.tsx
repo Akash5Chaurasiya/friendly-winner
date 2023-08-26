@@ -1,298 +1,169 @@
-import React, { useContext, useState } from 'react';
-
+import React, { useState } from 'react';
 import {
-
   Button,
-
   Text,
-
   TextInput,
-
   TouchableOpacity,
-
   View,
-
   StyleSheet,
-
+  Alert,
 } from 'react-native';
-
-
-// import Feather from 'react-native-vector-icons/Feather';
 import login from './fetch/services/login';
 import { useAuthContext } from '../../auth/AuthGuard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { showMessage, hideMessage } from "react-native-flash-message";
 
 const Login = () => {
-
   const [email, setEmail] = useState('');
-
   const [password, setPassword] = useState('');
-
   const [showPassword, setShowPassword] = useState(false);
 
   const auth = useAuthContext();
+
   const togglePasswordVisibility = () => {
-
     setShowPassword(!showPassword);
-
   };
 
   const handleLogin = async () => {
-    let data;
-    const verdict =
-      /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-        email,
-      );
-    if (!verdict) {
-      data = { phone: +email, password }
-    } else { data = { email, password } };
-    console.log("I am data",data);
-    const res = await login(data)
-    console.log("78941796525", res.data.user);
-    console.log("I am Calling Auth", auth.actions.login(res.data.user));
+    const isEmail = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+      email
+    );
+    const data = isEmail ? { email, password } : { phone: +email, password };
+
+    console.log("I am data", data);
+
+    try {
+      const res = await login(data);
+      console.log("78941796525", res.data.user);
+      console.log("Calling Auth", auth.actions.login(res.data.user));
+      showMessage({
+        message: "Login Success",
+        type: "success",
+        duration:5000,
+        floating:true
+      });
+    } catch (error:any) {
+      console.error("Login error:", error?.response.data.success);
+      if(error?.response.data.success==false){
+        showMessage({
+          message: "Login failed",
+          type: "danger",
+          duration:5000,
+          floating:true
+        });
+      }
+
+    }
   };
 
-
   return (
-
     <View style={styles.container}>
-
       <View style={styles.wrapper}>
+        <View style={styles.loginForm}>
+          <Text style={styles.heading}>Employee Login</Text>
 
-        <View style={{ justifyContent: 'center' }}>
-
-          <Text
-
-            style={{
-
-              color: 'black',
-
-              fontFamily: 'Inter',
-
-              fontWeight: '700',
-
-              paddingVertical: 30,
-
-              fontSize: 25,
-
-            }}
-
-          >
-
-            Employee Login
-
-          </Text>
-
-          <View style={{ paddingBottom: 15 }}>
-
-            <Text style={styles.labelTxt}>Email or Phone Number</Text>
-
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email or Phone Number</Text>
             <TextInput
-
               style={styles.input}
-
               value={email}
-
               onChangeText={text => setEmail(text)}
-
             />
-
           </View>
 
-          <View style={{ paddingBottom: 15 }}>
-
-            <Text style={styles.labelTxt}>Password</Text>
-
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Password</Text>
             <View style={styles.passwordInputWrapper}>
-
               <TextInput
-
                 style={styles.passwordInput}
-
                 value={password}
-
                 onChangeText={text => setPassword(text)}
-
-                secureTextEntry={!showPassword} // Toggle secureTextEntry based on showPassword state
-
+                secureTextEntry={!showPassword}
               />
-
               <TouchableOpacity
-
                 style={styles.eyeButton}
-
                 onPress={togglePasswordVisibility}
-
-              >
-
-              </TouchableOpacity>
-
+              />
             </View>
-
-            <View style={{ marginTop: 12 }}>
-
-              <TouchableOpacity style={styles.button} onPress={handleLogin}>
-
-                <View style={{ flexDirection: 'row' }}>
-
-                  {/* <Feather name="log-in" size={18} color={'white'} /> */}
-
-                  <Text style={styles.buttonText}>Login</Text>
-
-                </View>
-
-              </TouchableOpacity>
-
-            </View>
-
           </View>
 
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
         </View>
-
       </View>
-
     </View>
-
   );
-
 };
 
 const styles = StyleSheet.create({
-
   container: {
-
-    // flex: 1,
-
     paddingTop: 20,
-
     alignItems: 'center',
-
     justifyContent: 'center',
-
   },
-
   wrapper: {
-
     width: '90%',
-
   },
-
-  labelTxt: {
-
-    color: 'black',
-
-    fontWeight: '400',
-
-    fontFamily: 'Inter',
-
-    paddingBottom: 10,
-
-    marginRight: 12,
-
-    paddingTop: 12,
-
-  },
-
-  input: {
-
-    marginBottom: 12,
-
-    borderWidth: 1,
-
-    borderColor: '#666666',
-
-    borderRadius: 5,
-
-    paddingHorizontal: 14,
-
-  },
-
-  button: {
-
-    backgroundColor: '#283093',
-
-    // padding: 5,
-
+  loginForm: {
     justifyContent: 'center',
-
-    alignItems: 'center',
-
-    // width:102,
-
-    height: 45,
-
-    // padding: 10,
-
-    borderRadius: 5,
-
-    marginTop: 10,
-
-    width: '30%',
-
-    paddingHorizontal: 5,
-
-    paddingVertical: 3,
-
-    // height: '20%',
-
   },
-
-  buttonText: {
-
-    color: 'white',
-
-    paddingLeft: 10,
-
-    // textAlign: 'center',
-
-  },
-
-  link: {
-
-    backgroundColor: '#283093',
-
-    color: 'white',
-
-    padding: 10,
-
-    borderRadius: 10,
-
-  },
-
-  eyeButton: {
-
-    padding: 8,
-
-  },
-
-  passwordInputWrapper: {
-
-    flexDirection: 'row',
-
-    alignItems: 'center',
-
-    borderWidth: 1,
-
-    borderColor: '#666666',
-
-    borderRadius: 5,
-
-    paddingHorizontal: 10,
-
-  },
-
-  passwordInput: {
-
-    flex: 1,
-
-    paddingVertical: 8,
-
+  heading: {
     color: 'black',
-
+    fontFamily: 'Inter',
+    fontWeight: '700',
+    paddingVertical: 30,
+    fontSize: 25,
   },
-
+  inputContainer: {
+    paddingBottom: 15,
+  },
+  label: {
+    color: 'black',
+    fontWeight: '400',
+    fontFamily: 'Inter',
+    paddingBottom: 10,
+    marginRight: 12,
+    paddingTop: 12,
+  },
+  input: {
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#666666',
+    borderRadius: 5,
+    paddingHorizontal: 14,
+  },
+  passwordInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#666666',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
+  passwordInput: {
+    flex: 1,
+    paddingVertical: 8,
+    color: 'black',
+  },
+  eyeButton: {
+    padding: 8,
+  },
+  loginButton: {
+    backgroundColor: '#283093',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 45,
+    borderRadius: 5,
+    marginTop: 10,
+    width: '30%',
+    paddingHorizontal: 5,
+    paddingVertical: 3,
+  },
+  buttonText: {
+    color: 'white',
+    paddingLeft: 10,
+  },
 });
 
 export default Login;
-

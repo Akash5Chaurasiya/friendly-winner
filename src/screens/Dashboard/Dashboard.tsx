@@ -3,7 +3,6 @@ import React from 'react'
 import { useAuthContext } from '../../auth/AuthGuard';
 
 const Dashboard = () => {
-    console.log("akash");
     const auth=useAuthContext()
     console.log(auth.authData?.name);
     return ( 

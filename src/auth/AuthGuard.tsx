@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useLayoutEffect, useState } from "react";
 import RoleIndex from "./RoleIndex";
 import Login from "../screens/Login/Login";
+import LoadingScreen from "../components/loading/LoadingScreen";
 
 export interface RIAuthGuard {
     children: React.ReactNode
@@ -24,20 +25,24 @@ export default function AuthGuard(props: RIAuthGuard) {
     const { children } = props;
     const [loading, setLoading] = useState(true);
     const [state, setState] = useState<Auth.LoginData | null>(null);
-    useEffect(() => {
+    useLayoutEffect(() => {
         (async () => {
-            const loginData = await AsyncStorage.getItem('auth');
-            console.log("Hii my name is Auth Context",loginData);
-
-            if (loginData) {
-                const loginDataParsed = JSON.parse(loginData) as Auth.LoginData;
-                setState(loginDataParsed)
+            try {
+                const loginData = await AsyncStorage.getItem('auth');
+                if (loginData) {
+                    const loginDataParsed = JSON.parse(loginData) as Auth.LoginData;
+                    setState(loginDataParsed);
+                }
+            } catch (error) {
+                console.error('Error fetching login data:', error);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false)
-        })()
-    }, [])
+        })();
+    }, []);
     if (loading) {
-        // <ActivityIndicator/>
+        // console.log("Loading login data")
+        return <LoadingScreen />
     }
     if (state)
         return (
@@ -75,20 +80,20 @@ export default function AuthGuard(props: RIAuthGuard) {
                         phoneNumber: '',
                     }
                 },
-                actions:{
-                    logout:()=>{
+                actions: {
+                    logout: () => {
                         setState(null)
                     },
-                    login:d=>{
-                        (async ()=>{
-                            await AsyncStorage.setItem('auth',JSON.stringify(d))
+                    login: d => {
+                        (async () => {
+                            await AsyncStorage.setItem('auth', JSON.stringify(d))
                             setState(d);
                         })()
                     }
                 }
             }}
         >
-            <Login/>
+            <Login />
         </AuthContext.Provider>
     )
 }
