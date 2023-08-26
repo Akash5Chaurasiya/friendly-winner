@@ -5,6 +5,7 @@ namespace Auth {
         UNKNOWN = "UNKNOWN"
     }
     interface LoginData {
+        name?: string;
         loginData: {
             success: boolean;
             userId: string;
