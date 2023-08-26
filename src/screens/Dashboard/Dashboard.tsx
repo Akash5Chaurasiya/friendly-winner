@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import Navbar from '../../components/Navbar/Navbar'
 
 const Dashboard = () => {
     return (
         <View>
-            <Text>Dashboard</Text>
+            <Navbar />
         </View>
     )
 }
