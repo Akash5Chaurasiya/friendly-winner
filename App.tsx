@@ -9,20 +9,20 @@ import FlashMessage from 'react-native-flash-message'
 const Stack = createNativeStackNavigator();
 const App = () => {
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <FlashMessage position="top"/>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <FlashMessage position="top" />
       <NavigationContainer>
-        <AuthGuard>
-          <Stack.Navigator initialRouteName="dashboard">
-            <Stack.Screen
-              options={{
-                headerShown: false,
-              }}
-              name="dashboard"
-              component={Dashboard}
-            />
-          </Stack.Navigator>
-        </AuthGuard>
+          <AuthGuard>
+            <Stack.Navigator initialRouteName="dashboard">
+              <Stack.Screen
+                options={{
+                  headerShown: false,
+                }}
+                name="dashboard"
+                component={Dashboard}
+              />
+            </Stack.Navigator>
+          </AuthGuard>
       </NavigationContainer>
     </GestureHandlerRootView>
   )
