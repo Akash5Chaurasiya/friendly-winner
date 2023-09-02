@@ -47,7 +47,7 @@ const Dashboard = ({navigation}:any) => {
     const handleLoginPress = () => {
         // Place your navigation or action logic here
         // For example, navigation.navigate('SomeScreen') or dispatch(someAction())
-        navigation.navigate('Cam')
+        navigation.navigate('Camera')
     };
 
     return (

@@ -6,6 +6,7 @@ import AuthGuard from './src/auth/AuthGuard'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Dashboard from './src/screens/Dashboard/Dashboard'
 import FlashMessage from 'react-native-flash-message'
+import Camera from './src/components/Camera/Camera'
 const Stack = createNativeStackNavigator();
 const App = () => {
   return (
@@ -20,6 +21,13 @@ const App = () => {
                 }}
                 name="dashboard"
                 component={Dashboard}
+              />
+              <Stack.Screen
+                options={{
+                  headerShown: false,
+                }}
+                name="Camera"
+                component={Camera}
               />
             </Stack.Navigator>
           </AuthGuard>
