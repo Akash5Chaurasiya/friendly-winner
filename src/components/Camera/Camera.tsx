@@ -149,7 +149,7 @@ const BarcodeScanner = ({ navigation }) => {
                 '\n';
         }
     }
-console.log("9936562451",results);
+    console.log("9936562451", results);
     return (
         <DCVCameraView
             style={{

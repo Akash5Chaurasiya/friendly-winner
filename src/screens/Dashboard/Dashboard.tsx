@@ -9,8 +9,10 @@ import useSWR from 'swr';
 import { fetchTodos } from '../../reducer/postReducer/api';
 import { ImageIndex } from '../../assets/AssetIndex';
 import { showMessage } from 'react-native-flash-message';
+import Clickable from '../../components/Clickable/Clickable';
+import EntityCard from './components/EntityCard/EntityCard';
 
-const Dashboard = ({navigation}:any) => {
+const Dashboard = ({ navigation }: any) => {
     const auth = useAuthContext();
     console.log(auth.authData);
     const dispatch = useDispatch();
@@ -24,7 +26,7 @@ const Dashboard = ({navigation}:any) => {
     }, [dispatch, todos, error]);
 
     const todo = useSelector((state: any) => state.todos);
-    console.log("9936562451",todo);
+    console.log("9936562451", todo);
     // const checkCameraPermission = async () => {
     //     let status = await Camera.getCameraPermissionStatus();
     //     if (status !== 'authorized') {
@@ -74,10 +76,47 @@ const Dashboard = ({navigation}:any) => {
                 </View>
             </View>
             <View>
-                <FlatList
+                {/* <FlatList
                     data={todo}
                     renderItem={e => <View><Text>{e.item.title}</Text></View>}
-                />
+                /> */}
+                <View style={{ padding: '6%', width: '100%', height: '100%' }}>
+                    <View style={{ paddingBottom: 8 }}>
+                        <Text style={{ fontSize: 20, color: '#B0B0B0', fontWeight: '600' }} >WIRE SHOP</Text>
+                        <Text style={{ color: '#2E2E2E', fontSize: 25, fontWeight: '700' }}>Active Work Orders</Text>
+                    </View>
+
+                    <FlatList
+                        data={todo}
+                        renderItem={p => {
+                            const v = p.item;
+                            return (
+                                <Clickable
+                                    key={p.index}
+                                    onPress={() => {
+                                        navigation.navigate('childListing', {
+
+                                            id: p.item.id,
+                                            title: p.item.title,
+                                            userId: p.item.userId
+                                        }
+                                        );
+                                    }}>
+                                    <EntityCard
+                                        id={p.item.id}
+                                        title={p.item.title}
+                                        userId={p.item.userId}
+                                    />
+                                </Clickable>
+                            );
+                        }}
+                    />
+
+
+
+
+
+                </View>
                 <TouchableOpacity style={styles.loginButton} onPress={() => handleLoginPress()}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <Image style={{ width: 18, height: 18 }} source={ImageIndex.scan} />
